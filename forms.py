@@ -23,5 +23,5 @@ class RegistrationForm(FlaskForm):
     profile_photo = FileField('Profile Photo')
 
 class TestTypeForm(FlaskForm):
-    test_type = StringField('Test Type', validators=[DataRequired(), Length(min=2, max=64)])
+    name = StringField('Test Type', validators=[DataRequired(), Length(min=2, max=64)])
     language = StringField('Language', validators=[DataRequired(), Length(min=2, max=64)])
