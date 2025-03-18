@@ -127,8 +127,15 @@ def register():
             form.profile_photo.data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             user.profile_photo = filename
 
-        db.session.add(user)
+        # Create a new student record
+        student = Student(
+            name=f"{form.first_name.data} {form.last_name.data}",
+            is_new=True
+        )
+
         try:
+            db.session.add(user)
+            db.session.add(student)
             db.session.commit()
             flash('Registration successful!', 'success')
             return redirect(url_for('login'))
