@@ -146,6 +146,44 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/users')
+@login_required
+def user_list():
+    users = User.query.all()
+    return render_template('users.html', users=users)
+
+@app.route('/users/add', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(
+            first_name=form.first_name.data,
+            last_name=form.last_name.data,
+            email=form.email.data,
+            phone=form.phone.data,
+            password_hash=generate_password_hash(form.password.data),
+            is_new=True
+        )
+
+        if form.profile_photo.data:
+            filename = secure_filename(form.profile_photo.data.filename)
+            form.profile_photo.data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            user.profile_photo = filename
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash('User added successfully!', 'success')
+            return redirect(url_for('user_list'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to add user. Please try again.', 'error')
+            app.logger.error(f"User creation error: {str(e)}")
+
+    return render_template('add_user.html', form=form)
+
+
 # Create tables
 with app.app_context():
     db.create_all()
