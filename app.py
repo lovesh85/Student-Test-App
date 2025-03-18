@@ -56,7 +56,28 @@ def load_user(user_id):
 @app.route('/api/chart-data')
 @login_required
 def get_chart_data():
-    # Get the last 6 months of test attempts
+    six_months_ago = datetime.utcnow() - timedelta(days=180)
+    attempts = db.session.query(
+        func.date_trunc('month', TestAttempt.attempt_date).label('month'),
+        func.avg(TestAttempt.score).label('avg_score')
+    ).filter(
+        TestAttempt.attempt_date >= six_months_ago
+    ).group_by(
+        'month'
+    ).order_by(
+        'month'
+    ).all()
+
+    months = []
+    scores = []
+    for attempt in attempts:
+        months.append(attempt.month.strftime('%b'))
+        scores.append(float(attempt.avg_score) if attempt.avg_score else 0)
+
+    return jsonify({
+        'labels': months,
+        'data': scores
+    })
 
 def send_verification_email(user):
     token = serializer.dumps(user.email, salt='email-verification-salt')
