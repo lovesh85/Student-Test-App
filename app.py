@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, flash, redirect, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm import DeclarativeBase
@@ -28,6 +30,14 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
     "pool_pre_ping": True,
 }
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
+
+mail = Mail(app)
+serializer = URLSafeTimedSerializer(app.secret_key)
 
 # Initialize extensions
 db.init_app(app)
@@ -47,6 +57,36 @@ def load_user(user_id):
 @login_required
 def get_chart_data():
     # Get the last 6 months of test attempts
+
+def send_verification_email(user):
+    token = serializer.dumps(user.email, salt='email-verification-salt')
+    user.verification_token = token
+    db.session.commit()
+    
+    msg = Message('Verify Your Email',
+                  sender='noreply@example.com',
+                  recipients=[user.email])
+    
+    verification_url = url_for('verify_email', token=token, _external=True)
+    msg.body = f'Click the following link to verify your email: {verification_url}'
+    
+    mail.send(msg)
+
+@app.route('/verify-email/<token>')
+def verify_email(token):
+    try:
+        email = serializer.loads(token, salt='email-verification-salt', max_age=3600)
+        user = User.query.filter_by(email=email, verification_token=token).first()
+        if user:
+            user.is_verified = True
+            user.verification_token = None
+            db.session.commit()
+            flash('Email verified successfully!', 'success')
+            return redirect(url_for('login'))
+    except:
+        flash('The verification link is invalid or has expired.', 'error')
+    return redirect(url_for('login'))
+
     six_months_ago = datetime.utcnow() - timedelta(days=180)
     attempts = db.session.query(
         func.date_trunc('month', TestAttempt.attempt_date).label('month'),
@@ -99,6 +139,9 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.password_hash, form.password.data):
+            if not user.is_verified:
+                flash('Please verify your email before logging in.', 'error')
+                return redirect(url_for('login'))
             login_user(user, remember=form.remember_me.data)
             return redirect(url_for('dashboard'))
         flash('Invalid email or password', 'error')
@@ -132,7 +175,8 @@ def register():
         try:
             db.session.add(user)
             db.session.commit()
-            flash('Registration successful!', 'success')
+            send_verification_email(user)
+            flash('Registration successful! Please check your email to verify your account.', 'success')
             return redirect(url_for('login'))
         except Exception as e:
             db.session.rollback()
