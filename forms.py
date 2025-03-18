@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, FileField
+from wtforms import StringField, PasswordField, BooleanField, FileField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
 
 class LoginForm(FlaskForm):
@@ -21,3 +21,7 @@ class RegistrationForm(FlaskForm):
         EqualTo('password', message='Passwords must match')
     ])
     profile_photo = FileField('Profile Photo')
+
+class TestTypeForm(FlaskForm):
+    test_type = StringField('Test Type', validators=[DataRequired(), Length(min=2, max=64)])
+    language = StringField('Language', validators=[DataRequired(), Length(min=2, max=64)])

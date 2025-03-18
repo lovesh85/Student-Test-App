@@ -17,7 +17,9 @@ class User(UserMixin, db.Model):
 class TestType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
+    language = db.Column(db.String(64), nullable=False)
     description = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     test_attempts = db.relationship('TestAttempt', backref='test_type', lazy=True)
 
 class TestAttempt(db.Model):

@@ -36,7 +36,7 @@ login_manager.login_view = 'login'
 
 # Import routes after app initialization to avoid circular imports
 from models import User, TestType, TestAttempt
-from forms import LoginForm, RegistrationForm
+from forms import LoginForm, RegistrationForm, TestTypeForm # Assuming TestTypeForm exists
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -183,6 +183,62 @@ def add_user():
 
     return render_template('add_user.html', form=form)
 
+
+@app.route('/users/delete/<int:user_id>', methods=['POST'])
+@login_required
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        flash('User deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Failed to delete user. Please try again.', 'error')
+        app.logger.error(f"User deletion error: {str(e)}")
+    return redirect(url_for('user_list'))
+
+#New routes for test type management
+@app.route('/test-types')
+@login_required
+def test_types():
+    test_types = TestType.query.all()
+    return render_template('test_types.html', test_types=test_types)
+
+@app.route('/test-types/add', methods=['GET', 'POST'])
+@login_required
+def add_test_type():
+    form = TestTypeForm()
+    if form.validate_on_submit():
+        test_type = TestType(
+            name=form.name.data, #Corrected field name here. Assuming 'name' is the correct field.
+            language=form.language.data
+        )
+        try:
+            db.session.add(test_type)
+            db.session.commit()
+            flash('Test type added successfully!', 'success')
+            return redirect(url_for('test_types'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to add test type. Please try again.', 'error')
+            app.logger.error(f"Test type creation error: {str(e)}")
+
+    return render_template('add_test_type.html', form=form)
+
+@app.route('/test-types/delete/<int:test_type_id>', methods=['POST'])
+@login_required
+def delete_test_type(test_type_id):
+    test_type = TestType.query.get_or_404(test_type_id)
+    try:
+        db.session.delete(test_type)
+        db.session.commit()
+        flash('Test type deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Failed to delete test type. Please try again.', 'error')
+        app.logger.error(f"Test type deletion error: {str(e)}")
+    return redirect(url_for('test_types'))
 
 # Create tables
 with app.app_context():
