@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Test Master - Student Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Test Master</h2>
+        <a href="{{ url_for('add_test_master') }}" class="btn btn-primary">Add Test Master</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search" id="searchInput">
+                    <button class="btn btn-secondary" type="button">Search</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Test Type</th>
+                            <th>Question</th>
+                            <th>Question Image</th>
+                            <th>Answer (A)</th>
+                            <th>Answer (B)</th>
+                            <th>Answer (C)</th>
+                            <th>Answer (D)</th>
+                            <th>Correct Answer</th>
+                            <th>Created On</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test in test_masters %}
+                        <tr>
+                            <td>{{ test.id }}</td>
+                            <td>{{ test.test_type.name }}</td>
+                            <td>{{ test.question }}</td>
+                            <td>
+                                {% if test.question_image %}
+                                <img src="{{ url_for('static', filename='uploads/' + test.question_image) }}" 
+                                     alt="Question Image" style="max-width: 100px;">
+                                {% endif %}
+                            </td>
+                            <td>{{ test.answer_a }}</td>
+                            <td>{{ test.answer_b }}</td>
+                            <td>{{ test.answer_c }}</td>
+                            <td>{{ test.answer_d }}</td>
+                            <td>{{ test.correct_answer }}</td>
+                            <td>{{ test.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                            <td>{{ test.created_by }}</td>
+                            <td>
+                                <form action="{{ url_for('delete_test_master', test_master_id=test.id) }}" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-link text-danger" onclick="return confirm('Are you sure you want to delete this test question?')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

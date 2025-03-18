@@ -35,8 +35,8 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # Import routes after app initialization to avoid circular imports
-from models import User, TestType, TestAttempt
-from forms import LoginForm, RegistrationForm, TestTypeForm # Assuming TestTypeForm exists
+from models import User, TestType, TestAttempt, TestMaster # Added TestMaster import
+from forms import LoginForm, RegistrationForm, TestTypeForm, TestMasterForm # Added TestMasterForm import
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -239,6 +239,62 @@ def delete_test_type(test_type_id):
         flash('Failed to delete test type. Please try again.', 'error')
         app.logger.error(f"Test type deletion error: {str(e)}")
     return redirect(url_for('test_types'))
+
+# Add these routes after the existing routes in app.py
+@app.route('/test-master')
+@login_required
+def test_master_list():
+    test_masters = TestMaster.query.all()
+    return render_template('test_master.html', test_masters=test_masters)
+
+@app.route('/test-master/add', methods=['GET', 'POST'])
+@login_required
+def add_test_master():
+    form = TestMasterForm()
+    form.test_type.choices = [(t.id, t.name) for t in TestType.query.all()]
+
+    if form.validate_on_submit():
+        test_master = TestMaster(
+            test_type_id=form.test_type.data,
+            question=form.question.data,
+            answer_a=form.answer_a.data,
+            answer_b=form.answer_b.data,
+            answer_c=form.answer_c.data,
+            answer_d=form.answer_d.data,
+            correct_answer=form.correct_answer.data,
+            created_by=current_user.id
+        )
+
+        if form.question_image.data:
+            filename = secure_filename(form.question_image.data.filename)
+            form.question_image.data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            test_master.question_image = filename
+
+        try:
+            db.session.add(test_master)
+            db.session.commit()
+            flash('Test question added successfully!', 'success')
+            return redirect(url_for('test_master_list'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Failed to add test question. Please try again.', 'error')
+            app.logger.error(f"Test master creation error: {str(e)}")
+
+    return render_template('add_test_master.html', form=form)
+
+@app.route('/test-master/delete/<int:test_master_id>', methods=['POST'])
+@login_required
+def delete_test_master(test_master_id):
+    test_master = TestMaster.query.get_or_404(test_master_id)
+    try:
+        db.session.delete(test_master)
+        db.session.commit()
+        flash('Test question deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Failed to delete test question. Please try again.', 'error')
+        app.logger.error(f"Test master deletion error: {str(e)}")
+    return redirect(url_for('test_master_list'))
 
 # Create tables
 with app.app_context():

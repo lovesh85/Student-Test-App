@@ -20,7 +20,21 @@ class TestType(db.Model):
     language = db.Column(db.String(64), nullable=False)
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    test_questions = db.relationship('TestMaster', backref='test_type', lazy=True)
     test_attempts = db.relationship('TestAttempt', backref='test_type', lazy=True)
+
+class TestMaster(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    test_type_id = db.Column(db.Integer, db.ForeignKey('test_type.id'), nullable=False)
+    question = db.Column(db.Text, nullable=False)
+    question_image = db.Column(db.String(255))
+    answer_a = db.Column(db.Text, nullable=False)
+    answer_b = db.Column(db.Text, nullable=False)
+    answer_c = db.Column(db.Text, nullable=False)
+    answer_d = db.Column(db.Text, nullable=False)
+    correct_answer = db.Column(db.String(1), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 class TestAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
