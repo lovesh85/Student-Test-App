@@ -10,14 +10,9 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(20), nullable=False)
     password_hash = db.Column(db.String(256), nullable=False)
     profile_photo = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-class Student(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), nullable=False)
     is_new = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    test_attempts = db.relationship('TestAttempt', backref='student', lazy=True)
+    test_attempts = db.relationship('TestAttempt', backref='user', lazy=True)
 
 class TestType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -27,7 +22,7 @@ class TestType(db.Model):
 
 class TestAttempt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     test_type_id = db.Column(db.Integer, db.ForeignKey('test_type.id'), nullable=False)
     passed = db.Column(db.Boolean, default=False)
     score = db.Column(db.Float)

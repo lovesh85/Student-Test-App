@@ -35,7 +35,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # Import routes after app initialization to avoid circular imports
-from models import User, Student, TestType, TestAttempt
+from models import User, TestType, TestAttempt
 from forms import LoginForm, RegistrationForm
 
 @login_manager.user_loader
@@ -74,8 +74,8 @@ def get_chart_data():
 @login_required
 def dashboard():
     # Get real-time statistics
-    total_students = Student.query.count()
-    new_students = Student.query.filter_by(is_new=True).count()
+    total_students = User.query.count()
+    new_students = User.query.filter_by(is_new=True).count()
     test_types = TestType.query.count()
     total_attempts = TestAttempt.query.count()
     passed_attempts = TestAttempt.query.filter_by(passed=True).count()
@@ -119,7 +119,8 @@ def register():
             last_name=form.last_name.data,
             email=form.email.data,
             phone=form.phone.data,
-            password_hash=generate_password_hash(form.password.data)
+            password_hash=generate_password_hash(form.password.data),
+            is_new=True
         )
 
         if form.profile_photo.data:
@@ -127,15 +128,8 @@ def register():
             form.profile_photo.data.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             user.profile_photo = filename
 
-        # Create a new student record
-        student = Student(
-            name=f"{form.first_name.data} {form.last_name.data}",
-            is_new=True
-        )
-
         try:
             db.session.add(user)
-            db.session.add(student)
             db.session.commit()
             flash('Registration successful!', 'success')
             return redirect(url_for('login'))
