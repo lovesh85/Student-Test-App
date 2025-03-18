@@ -323,7 +323,44 @@ def start_test():
     form.test_type.choices = [(t.id, t.name) for t in TestType.query.all()]
 
     if form.validate_on_submit():
-        flash('Test started successfully!', 'success')
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('take_test', test_type_id=form.test_type.data))
 
     return render_template('start_test.html', form=form)
+
+@app.route('/take-test/<int:test_type_id>', methods=['GET', 'POST'])
+@login_required
+def take_test(test_type_id):
+    test_type = TestType.query.get_or_404(test_type_id)
+    questions = TestMaster.query.filter_by(test_type_id=test_type_id).all()
+    
+    if request.method == 'POST':
+        score = 0
+        total_questions = len(questions)
+        
+        for question in questions:
+            answer_key = f'answer_{question.id}'
+            if answer_key in request.form:
+                if request.form[answer_key] == question.correct_answer:
+                    score += 1
+        
+        percentage = (score / total_questions) * 100
+        passed = percentage >= 60  # Pass mark is 60%
+        
+        test_attempt = TestAttempt(
+            user_id=current_user.id,
+            test_type_id=test_type_id,
+            score=percentage,
+            passed=passed
+        )
+        
+        try:
+            db.session.add(test_attempt)
+            db.session.commit()
+            flash(f'Test completed! Your score: {percentage:.2f}%', 'success')
+            return redirect(url_for('dashboard'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error saving test results. Please try again.', 'error')
+            app.logger.error(f"Test attempt save error: {str(e)}")
+    
+    return render_template('take_test.html', test_type=test_type, questions=questions, form=StartTestForm())

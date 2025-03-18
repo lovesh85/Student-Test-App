@@ -1,0 +1,45 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">{{ test_type.name }} Test</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {% for question in questions %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Question {{ loop.index }}</h5>
+                        <p class="card-text">{{ question.question }}</p>
+                        {% if question.question_image %}
+                        <img src="{{ url_for('static', filename='uploads/' + question.question_image) }}" class="img-fluid mb-3">
+                        {% endif %}
+                        <div class="form-check">
+                            <input type="radio" name="answer_{{ question.id }}" value="A" class="form-check-input" required>
+                            <label class="form-check-label">{{ question.answer_a }}</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="answer_{{ question.id }}" value="B" class="form-check-input">
+                            <label class="form-check-label">{{ question.answer_b }}</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="answer_{{ question.id }}" value="C" class="form-check-input">
+                            <label class="form-check-label">{{ question.answer_c }}</label>
+                        </div>
+                        <div class="form-check">
+                            <input type="radio" name="answer_{{ question.id }}" value="D" class="form-check-input">
+                            <label class="form-check-label">{{ question.answer_d }}</label>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Submit Test</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
