@@ -1,10 +1,12 @@
 import os
-from flask import Flask, render_template, flash, redirect, url_for, request
+from datetime import datetime, timedelta
+from flask import Flask, render_template, flash, redirect, url_for, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import func
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
@@ -40,9 +42,38 @@ from forms import LoginForm, RegistrationForm
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
+@app.route('/api/chart-data')
+@login_required
+def get_chart_data():
+    # Get the last 6 months of test attempts
+    six_months_ago = datetime.utcnow() - timedelta(days=180)
+    attempts = db.session.query(
+        func.date_trunc('month', TestAttempt.attempt_date).label('month'),
+        func.avg(TestAttempt.score).label('avg_score')
+    ).filter(
+        TestAttempt.attempt_date >= six_months_ago
+    ).group_by(
+        'month'
+    ).order_by(
+        'month'
+    ).all()
+
+    # Format data for Chart.js
+    months = []
+    scores = []
+    for attempt in attempts:
+        months.append(attempt.month.strftime('%b'))
+        scores.append(float(attempt.avg_score) if attempt.avg_score else 0)
+
+    return jsonify({
+        'labels': months,
+        'data': scores
+    })
+
 @app.route('/')
 @login_required
 def dashboard():
+    # Get real-time statistics
     total_students = Student.query.count()
     new_students = Student.query.filter_by(is_new=True).count()
     test_types = TestType.query.count()
