@@ -11,8 +11,6 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256), nullable=False)
     profile_photo = db.Column(db.String(255))
     is_new = db.Column(db.Boolean, default=True)
-    is_verified = db.Column(db.Boolean, default=False)
-    verification_token = db.Column(db.String(100), unique=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     test_attempts = db.relationship('TestAttempt', backref='user', lazy=True)
 
