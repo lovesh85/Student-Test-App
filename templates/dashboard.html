@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Student Management System{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row">
+    <!-- Total Students -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">{{ total_students }}</div>
+                    <div class="label">Total Students</div>
+                </div>
+                <div class="icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Students -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">{{ new_students }}</div>
+                    <div class="label">New Students</div>
+                </div>
+                <div class="icon">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Test Types -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">{{ test_types }}</div>
+                    <div class="label">Test Types</div>
+                </div>
+                <div class="icon">
+                    <i class="bi bi-file-text-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Total Attempts -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">{{ total_attempts }}</div>
+                    <div class="label">Total Attempts</div>
+                </div>
+                <div class="icon">
+                    <i class="bi bi-clipboard-data"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Passed Attempts -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">{{ passed_attempts }}</div>
+                    <div class="label">Passed Attempts</div>
+                </div>
+                <div class="icon">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Failed Attempts -->
+    <div class="col-md-4">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="number">{{ failed_attempts }}</div>
+                    <div class="label">Failed Attempts</div>
+                </div>
+                <div class="icon">
+                    <i class="bi bi-x-circle-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Students Test Chart -->
+<div class="chart-container mt-4">
+    <canvas id="studentsTestChart"></canvas>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
