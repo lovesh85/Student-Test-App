@@ -37,3 +37,7 @@ class TestMasterForm(FlaskForm):
     correct_answer = SelectField('Correct Answer', choices=[
         ('A', 'A'), ('B', 'B'), ('C', 'C'), ('D', 'D')
     ], validators=[DataRequired()])
+
+class AllocateTestForm(FlaskForm):
+    user = SelectField('User', coerce=int, validators=[DataRequired()])
+    test_type = SelectField('Test Type', coerce=int, validators=[DataRequired()])

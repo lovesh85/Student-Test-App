@@ -36,7 +36,8 @@ login_manager.login_view = 'login'
 
 # Import routes after app initialization to avoid circular imports
 from models import User, TestType, TestAttempt, TestMaster # Added TestMaster import
-from forms import LoginForm, RegistrationForm, TestTypeForm, TestMasterForm # Added TestMasterForm import
+from forms import LoginForm, RegistrationForm, TestTypeForm, TestMasterForm, AllocateTestForm # Added TestMasterForm and AllocateTestForm import
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -295,6 +296,20 @@ def delete_test_master(test_master_id):
         flash('Failed to delete test question. Please try again.', 'error')
         app.logger.error(f"Test master deletion error: {str(e)}")
     return redirect(url_for('test_master_list'))
+
+@app.route('/allocate-test', methods=['GET', 'POST'])
+@login_required
+def allocate_test():
+    form = AllocateTestForm()
+    form.user.choices = [(u.id, f"{u.first_name} {u.last_name}") for u in User.query.all()]
+    form.test_type.choices = [(t.id, t.name) for t in TestType.query.all()]
+
+    if form.validate_on_submit():
+        # Handle form submission here
+        flash('Test allocated successfully!', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('allocate_test.html', form=form)
 
 # Create tables
 with app.app_context():
