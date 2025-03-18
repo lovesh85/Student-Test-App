@@ -36,7 +36,7 @@ login_manager.login_view = 'login'
 
 # Import routes after app initialization to avoid circular imports
 from models import User, TestType, TestAttempt, TestMaster # Added TestMaster import
-from forms import LoginForm, RegistrationForm, TestTypeForm, TestMasterForm, AllocateTestForm # Added TestMasterForm and AllocateTestForm import
+from forms import LoginForm, RegistrationForm, TestTypeForm, TestMasterForm, AllocateTestForm, StartTestForm # Added TestMasterForm and AllocateTestForm import
 
 
 @login_manager.user_loader
@@ -314,3 +314,16 @@ def allocate_test():
 # Create tables
 with app.app_context():
     db.create_all()
+
+
+@app.route('/start-test', methods=['GET', 'POST'])
+@login_required
+def start_test():
+    form = StartTestForm()
+    form.test_type.choices = [(t.id, t.name) for t in TestType.query.all()]
+
+    if form.validate_on_submit():
+        flash('Test started successfully!', 'success')
+        return redirect(url_for('dashboard'))
+
+    return render_template('start_test.html', form=form)

@@ -1,0 +1,29 @@
+
+{% extends "base.html" %}
+
+{% block title %}Start Test - Student Management System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Start Test</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('start_test') }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.test_type.label(class="form-label") }}
+                    {{ form.test_type(class="form-select") }}
+                    {% if form.test_type.errors %}
+                        {% for error in form.test_type.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">Start Test</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

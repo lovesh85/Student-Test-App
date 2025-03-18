@@ -41,3 +41,6 @@ class TestMasterForm(FlaskForm):
 class AllocateTestForm(FlaskForm):
     user = SelectField('User', coerce=int, validators=[DataRequired()])
     test_type = SelectField('Test Type', coerce=int, validators=[DataRequired()])
+
+class StartTestForm(FlaskForm):
+    test_type = SelectField('Test Type', coerce=int, validators=[DataRequired()])
