@@ -85,9 +85,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     datasets: [{
                         label: 'Average Test Score',
                         data: data.data,
-                        fill: false,
+                        fill: true,
+                        backgroundColor: 'rgba(123, 104, 238, 0.2)',
                         borderColor: 'rgb(123, 104, 238)',
-                        tension: 0.1
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: 'rgb(123, 104, 238)',
+                        pointBorderColor: '#fff',
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
@@ -112,10 +118,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         y: {
                             beginAtZero: true,
                             grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                drawBorder: false
                             },
                             ticks: {
-                                color: '#fff'
+                                color: '#fff',
+                                font: {
+                                    size: 12
+                                },
+                                padding: 10
                             }
                         },
                         x: {
