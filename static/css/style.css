@@ -1,4 +1,149 @@
-/* Custom styles on top of Bootstrap dark theme */
+/* Modern dark theme styles */
+:root {
+    --primary-color: #7b68ee;
+    --secondary-color: #4a90e2;
+    --dark-bg: #1a1c27;
+    --card-bg: #2a2d3e;
+    --text-primary: #ffffff;
+    --text-secondary: #b3b3b3;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border-bottom: none;
+    border-radius: 12px 12px 0 0 !important;
+    color: white;
+    padding: 1.5rem;
+}
+
+.form-control, .form-select {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--text-primary);
+    padding: 0.8rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(123, 104, 238, 0.25);
+    color: var(--text-primary);
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.8rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+    transform: translateY(-1px);
+}
+
+.sidebar {
+    background: linear-gradient(180deg, var(--card-bg) 0%, var(--dark-bg) 100%);
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.nav-link {
+    border-radius: 8px;
+    color: var(--text-secondary);
+    margin: 0.3rem 0;
+    padding: 0.8rem 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    transform: translateX(5px);
+}
+
+.nav-link i {
+    margin-right: 10px;
+}
+
+.chart-container {
+    background-color: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 400px;
+}
+
+.stat-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.stat-card .icon {
+    color: var(--primary-color);
+    font-size: 28px;
+}
+
+.stat-card .number {
+    color: var(--text-primary);
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.stat-card .label {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+table {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th {
+    background-color: rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+td {
+    color: var(--text-primary);
+}
+
+.alert {
+    border-radius: 8px;
+    margin: 1rem 0;
+}
 .sidebar {
     min-height: 100vh;
     background-color: var(--bs-dark);
