@@ -40,4 +40,6 @@
     border-radius: 8px;
     padding: 20px;
     margin-top: 20px;
+    height: 300px;
+    max-height: 300px;
 }

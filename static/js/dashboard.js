@@ -1,7 +1,7 @@
 // Initialize Chart.js for student test statistics
 document.addEventListener('DOMContentLoaded', function() {
     const ctx = document.getElementById('studentsTestChart').getContext('2d');
-    
+
     // Fetch and display test statistics
     fetch('/api/chart-data')
         .then(response => response.json())
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         title: {
                             display: true,
@@ -83,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 options: {
                     responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             labels: {
