@@ -13,6 +13,9 @@ class User(UserMixin, db.Model):
     is_new = db.Column(db.Boolean, default=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     test_attempts = db.relationship('TestAttempt', backref='user', lazy=True)
+    is_verified = db.Column(db.Boolean, default=False)
+    otp = db.Column(db.String(6))
+    otp_expiry = db.Column(db.DateTime)
 
 class TestType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
