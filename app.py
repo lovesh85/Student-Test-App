@@ -14,7 +14,7 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-# Initialize Flask-Login
+# Flask-Login
 login_manager = LoginManager()
 
 class Base(DeclarativeBase):
@@ -32,7 +32,7 @@ app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
 }
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-# Initialize extensions
+#  extensions
 db.init_app(app)
 login_manager.init_app(app)
 login_manager.login_view = 'login'
